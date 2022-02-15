@@ -1,0 +1,27 @@
+html, main, body {
+    height: 100%;
+    margin: 0;
+}
+
+.kanji {
+    height: 80%;
+}
+
+.strokes {
+    height: 100%;
+}
+
+svg {
+    width: auto;
+    max-height: 100%;
+    display: block;
+}
+
+path {
+    stroke: black;
+    animation-duration: 0.2s;
+}
+
+path:hover {
+    stroke: red;
+}
