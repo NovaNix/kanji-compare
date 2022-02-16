@@ -158,28 +158,14 @@ async function loadKanji(kanji, slot)
 
         // Populate Kanji Info
 
-        function waitForData() 
-        {
-            console.log("Current data state: " + dictionaryDoc);
+        let doc = await dictionaryDoc;
+        
+        let kanjiData = kanjiMap.get(kanji);
 
-            if (dictionaryDoc !== "undefined") 
-            {
-                let kanjiData = kanjiMap.get(kanji);
+        card.getElementsByClassName("meanings")[0].innerHTML = getMeanings(kanjiData);
+        card.getElementsByClassName("readings")[0].innerHTML = getReadings(kanjiData);
 
-                card.getElementsByClassName("meanings")[0].innerHTML = getMeanings(kanjiData);
-                card.getElementsByClassName("readings")[0].innerHTML = getReadings(kanjiData);
-
-                console.log("Finished loading kanji " + kanji);
-            }
-
-            else 
-            {
-                console.log("Waiting for kanji data to be loaded...");
-                setTimeout(waitForData, 250);
-            }
-        }
-
-        waitForData();
+        console.log("Finished loading kanji " + kanji);
 
     }
 
