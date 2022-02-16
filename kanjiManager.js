@@ -164,18 +164,29 @@ async function loadKanji(kanji, slot)
 
     // Populate Kanji Info
 
-    let kanjiData = kanjiMap.get(kanji);
+    function waitForData()
+    {
+        if(typeof dictionaryDoc !== "undefined")
+        {
+            let kanjiData = kanjiMap.get(kanji);
 
-    
+            card.getElementsByClassName("meanings")[0].innerHTML = getMeanings(kanjiData);
+            card.getElementsByClassName("readings")[0].innerHTML = getReadings(kanjiData);
+        }
+        else
+        {
+            console.log("Waiting for kanji data to be loaded...");
+            setTimeout(waitForData, 250);
+        }
+    }
+
+    waitForData();
 
     //console.log("Meanings: " + xmlNodeArrayToString(kanjiMeanings));
 
-    card.getElementsByClassName("meanings")[0].innerHTML = getMeanings(kanjiData);
-    card.getElementsByClassName("readings")[0].innerHTML = getReadings(kanjiData);
+    
 
 }
-
-kanjiLoadPromise = loadKanjiData();
 
 loadKanji("人", 0);
 loadKanji("入", 1);
