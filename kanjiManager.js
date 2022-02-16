@@ -160,7 +160,7 @@ async function loadKanji(kanji, slot)
 
         function waitForData() 
         {
-            if (typeof dictionaryDoc !== "undefined") 
+            if (dictionaryDoc !== "undefined") 
             {
                 let kanjiData = kanjiMap.get(kanji);
 
