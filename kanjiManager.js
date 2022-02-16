@@ -42,11 +42,13 @@ async function loadKanji(kanji, slot)
 
     let svgNode = kanjiDoc.getElementsByTagName("svg")[0];
 
-    svgNode.setAttribute("width", "100%");
-    svgNode.setAttribute("height", "100%");
+    svgNode.removeAttribute("width");
+    svgNode.removeAttribute("height");
+    svgNode.setAttribute("preserveAspectRatio", "xMidYMid meet");
     //svgNode.height = "";
 
     document.getElementById("kanji-" + slot).getElementsByClassName("strokes")[0].innerHTML = serializer.serializeToString(svgNode);
 }
 
 loadKanji("日", 0);
+loadKanji("月", 1);

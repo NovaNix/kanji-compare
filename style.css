@@ -1,27 +1,72 @@
 html, main, body {
     height: 100%;
     margin: 0;
+    background-color: lightgray;
+}
+
+#kanji-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    padding: 20px;
 }
 
 .kanji {
-    height: 80%;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    flex: 1 1 0;
+    
+    max-height: 90%;
+    height: 100%;
+
+    /*width: 100%;*/
 }
 
 .strokes {
-    height: 100%;
+    
+    max-width: 100%;
+    width: 100%;
+    max-height: 80%;
+    height: auto;
+    border-color: black;
+    border-style: solid;
+    border-width: 5px;
+
+    background-color: white;
 }
 
 svg {
-    width: auto;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     display: block;
 }
 
 path {
     stroke: black;
-    animation-duration: 0.2s;
+    animation-duration: 0.5s;
 }
 
 path:hover {
     stroke: red;
+}
+
+.kanji-input {
+    width: 1em;
+    height: 1em;
+    
+    text-align: center;
+    font-size: 3em;
+    padding: 5px;
+    margin-top: 10px;
 }
