@@ -76,6 +76,7 @@ path:hover {
 }
 
 .kanji-input {
+    min-width: 1em;
     width: 1em;
     height: 1em;
     
@@ -94,7 +95,7 @@ path:hover {
 }
 
 .meanings {
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     text-transform: capitalize;
     text-align: center; 
 }
