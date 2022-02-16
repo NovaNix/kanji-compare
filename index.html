@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Kanji Compare</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        
+        <main>
+            <div id="kanji-container">
+                <article id="kanji-0" class="kanji" data-slot="0">
+                    <input type="text" class="kanji-input" maxlength="1" oninput="updateCard(this.parentNode)">
+                    <div class="kanji-image">
+                        <div class="strokes">
+                            <!-- Will be filled with a svg file containing the strokes of the kanji -->
+                        </div>
+                    </div>
+                    <section class="kanji-data">
+                        <h2 class="meanings"></h2>
+                        <h3 class="readings"></h3>
+                    </section>
+                </article>
+                <article id="kanji-1" class="kanji" data-slot="1">
+                    <input type="text" class="kanji-input" maxlength="1" oninput="updateCard(this.parentNode)">
+                    <div class="kanji-image">
+                        <div class="strokes">
+                            <!-- Will be filled with a svg file containing the strokes of the kanji -->
+                        </div>
+                    </div>
+                    <section class="kanji-data">
+                        <h2 class="meanings"></h2>
+                        <h3 class="readings"></h3>
+                    </section>
+                    
+                </article>
+            </div>
+        </main>
+        <script src="/kanjiManager.js"></script>
+        <script src="/cardManager.js"></script>
+    </body>
+</html>

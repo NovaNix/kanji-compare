@@ -1,0 +1,105 @@
+html, main, body {
+    height: 100%;
+    margin: 0;
+    background-color: lightgray;
+}
+
+#kanji-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.kanji {
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    /*flex: 1 1 0;*/
+    
+    max-height: 90%;
+    height: 100%;
+
+    /*width: 100%;*/
+}
+
+.kanji-image {
+    height: auto;
+    width: 60vh;
+}
+
+.strokes {
+    
+    
+    width: 100%;
+    height: 0;
+    padding-top: 100%;
+    
+    box-sizing: border-box;
+    
+    border-color: black;
+    border-style: solid;
+    border-width: 5px;
+
+    background-color: white;
+    
+    position: relative;
+}
+
+svg {
+    
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+path {
+    stroke: black;
+    transition-duration: 0.2s;
+}
+
+path:hover {
+    stroke: red;
+}
+
+.kanji-input {
+    width: 1em;
+    height: 1em;
+    
+    text-align: center;
+    font-size: 3em;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.kanji-data {
+    /*width: 60%;
+    background-color: white;*/
+}
+
+.meanings {
+    font-family: 'Noto Sans JP', sans-serif;
+    text-transform: capitalize;
+    text-align: center; 
+}
+
+.readings {
+    font-family: 'Noto Sans JP', sans-serif;
+    text-align: center;
+}
