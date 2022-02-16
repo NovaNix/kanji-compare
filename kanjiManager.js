@@ -4,37 +4,33 @@ const serializer = new XMLSerializer();
 var dictionaryDoc = loadKanjiData();
 const kanjiMap = new Map();
 
-var kanjiLoadPromise;
-
 // Reads from the massive XML file containing all of the information about the kanji (excluding their drawing) and maps them by kanji to make it easier to access that information
 // Might be a more efficient way to handle all of this data that I don't know
 async function loadKanjiData()
 {
-    console.log("Loading kanji dictionary...");
+    console.log("Loading Kanji Dictionary...");
 
     let response = await fetch("./data/kanjidic2.xml");
 
     if (response.ok)
     {
-        console.log("File fetched.");
+        console.log("Kanji Dictionary XML Fetched. Loading characters...");
 
         let xmlString = await response.text();
 
-        let dictionaryDoc = parser.parseFromString(xmlString, "text/xml");
+        let doc = parser.parseFromString(xmlString, "text/xml");
 
-        let charArray = dictionaryDoc.getElementsByTagName("character");
+        let charArray = doc.getElementsByTagName("character");
 
         for (let i = 0; i < charArray.length; i++)
         {
             let char = charArray[i];
             kanjiMap.set(char.getElementsByTagName("literal")[0].childNodes[0].nodeValue, char);
-
-            //console.log("Added key " + char.getElementsByTagName("literal")[0].childNodes[0].nodeValue);
         }
 
         console.log("Loaded " + charArray.length + " characters");
 
-        return dictionaryDoc;
+        return doc;
     }
 
     else
@@ -44,6 +40,8 @@ async function loadKanjiData()
     }
 }
 
+// Extracts the hexidecimal unicode value from a character
+// Returns a string
 function getUnicodeHex(char)
 {
     let code = char.charCodeAt(0).toString(16)
@@ -56,23 +54,7 @@ function getUnicodeHex(char)
     return code;
 }
 
-function xmlNodeArrayToString(nodeArray)
-{
-    let nodeString = "";
-
-    for (let i = 0; i < nodeArray.length; i++)
-    {
-        nodeString = nodeString + nodeArray[i].childNodes[0].nodeValue;
-
-        if (i < nodeArray.length - 1)
-        {
-            nodeString = nodeString + ", ";
-        }
-    }
-
-    return nodeString;
-}
-
+// Returns a string containing all of the english meanings of a kanji separated by commas
 function getMeanings(kanjiData)
 {
     let nodeString = "";
@@ -97,6 +79,7 @@ function getMeanings(kanjiData)
     return nodeString;
 }
 
+// Returns a string containing all of the readings of a kanji separated by commas
 function getReadings(kanjiData)
 {
     let nodeString = "";
@@ -109,7 +92,7 @@ function getReadings(kanjiData)
     {
         node = nodeArray[i];
 
-        if (node.getAttribute("r_type") == "ja_on")
+        if (node.getAttribute("r_type") == "ja_on" || node.getAttribute("r_type") == "ja_kun")
         {
             if (added > 0)
             {
@@ -130,7 +113,7 @@ async function loadKanji(kanji, slot)
     let kanjiCode = getUnicodeHex(kanji);
 
     console.log("Loading Kanji " + kanji);
-    console.log("Kanji Code: " + kanjiCode);
+    //console.log("Kanji Code: " + kanjiCode);
 
     let kanjiResponse = await fetch("https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/" + kanjiCode + ".svg");
 
