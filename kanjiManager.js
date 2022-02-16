@@ -160,6 +160,8 @@ async function loadKanji(kanji, slot)
 
         function waitForData() 
         {
+            console.log("Current data state: " + dictionaryDoc);
+
             if (dictionaryDoc !== "undefined") 
             {
                 let kanjiData = kanjiMap.get(kanji);
