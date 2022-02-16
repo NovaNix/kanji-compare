@@ -76,6 +76,7 @@ path:hover {
 }
 
 .kanji-input {
+    min-width: 1em;
     width: 1em;
     height: 1em;
     
