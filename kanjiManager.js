@@ -2,7 +2,6 @@ const parser = new DOMParser();
 const serializer = new XMLSerializer();
 
 var dictionaryDoc = loadKanjiData();
-const kanjiMap = new Map();
 
 var kanjiLoadPromise;
 
@@ -113,7 +112,7 @@ function getReadings(kanjiData)
         {
             if (added > 0)
             {
-                nodeString = nodeString + ", "
+                nodeString = nodeString + ", ";
             }
 
             nodeString = nodeString + node.childNodes[0].nodeValue;
