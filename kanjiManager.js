@@ -136,55 +136,55 @@ async function loadKanji(kanji, slot)
 
     if (kanjiResponse.ok)
     {
-        console.log("Loaded kanji " + kanji + " properly");
+        console.log("Successfully got kanji strokes for " + kanji);
+
+        let svgString = await kanjiResponse.text();
+
+        let kanjiDoc = parser.parseFromString(svgString, "image/svg+xml");
+
+        kanjiDoc.getElementById("kvg:StrokeNumbers_" + kanjiCode).remove(); // Remove stroke numbers
+
+        // Configure SVG Node
+
+        let svgNode = kanjiDoc.getElementsByTagName("svg")[0];
+
+        svgNode.removeAttribute("width");
+        svgNode.removeAttribute("height");
+        svgNode.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+        let card = document.getElementById("kanji-" + slot);
+
+        card.getElementsByClassName("strokes")[0].innerHTML = serializer.serializeToString(svgNode);
+
+        // Populate Kanji Info
+
+        function waitForData() 
+        {
+            if (typeof dictionaryDoc !== "undefined") 
+            {
+                let kanjiData = kanjiMap.get(kanji);
+
+                card.getElementsByClassName("meanings")[0].innerHTML = getMeanings(kanjiData);
+                card.getElementsByClassName("readings")[0].innerHTML = getReadings(kanjiData);
+
+                console.log("Finished loading kanji " + kanji);
+            }
+
+            else 
+            {
+                console.log("Waiting for kanji data to be loaded...");
+                setTimeout(waitForData, 250);
+            }
+        }
+
+        waitForData();
+
     }
 
     else
     {
         console.error("Failed to load kanji " + kanji + " properly: " + kanjiResponse.status + ": " + kanjiResponse.statusText);
     }
-
-    let svgString = await kanjiResponse.text();
-
-    let kanjiDoc = parser.parseFromString(svgString, "image/svg+xml");
-
-    kanjiDoc.getElementById("kvg:StrokeNumbers_" + kanjiCode).remove(); // Remove stroke numbers
-
-    // Configure SVG Node
-
-    let svgNode = kanjiDoc.getElementsByTagName("svg")[0];
-
-    svgNode.removeAttribute("width");
-    svgNode.removeAttribute("height");
-    svgNode.setAttribute("preserveAspectRatio", "xMidYMid meet");
-
-    let card = document.getElementById("kanji-" + slot);
-
-    card.getElementsByClassName("strokes")[0].innerHTML = serializer.serializeToString(svgNode);
-
-    // Populate Kanji Info
-
-    function waitForData()
-    {
-        if(typeof dictionaryDoc !== "undefined")
-        {
-            let kanjiData = kanjiMap.get(kanji);
-
-            card.getElementsByClassName("meanings")[0].innerHTML = getMeanings(kanjiData);
-            card.getElementsByClassName("readings")[0].innerHTML = getReadings(kanjiData);
-        }
-        else
-        {
-            console.log("Waiting for kanji data to be loaded...");
-            setTimeout(waitForData, 250);
-        }
-    }
-
-    waitForData();
-
-    //console.log("Meanings: " + xmlNodeArrayToString(kanjiMeanings));
-
-    
 
 }
 
