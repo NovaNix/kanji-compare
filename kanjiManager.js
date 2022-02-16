@@ -12,7 +12,7 @@ async function loadKanjiData()
 {
     console.log("Loading kanji dictionary...");
 
-    let response = await fetch("/data/kanjidic2.xml");
+    let response = await fetch("./data/kanjidic2.xml");
 
     if (response.ok)
     {
