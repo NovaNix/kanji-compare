@@ -5,16 +5,18 @@ const kanjiMap = new Map();
 var dictionaryDoc;
 
 // Responsible for storing and providing access to kanji readings, meanings, etc
-class KanjiDictionary
+export class KanjiDictionary
 {
     constructor()
     {
         if (dictionaryDoc == undefined)
         {
-            dictionaryDoc = load();
+            dictionaryDoc = this.load();
         }
     }
 
+    // Reads from the massive XML file containing all of the information about the kanji (excluding their drawing) and maps them by kanji to make it easier to access that information
+    // Might be a more efficient way to handle all of this data that I don't know
     async load()
     {
         console.log("Loading Kanji Dictionary...");
@@ -60,7 +62,7 @@ class KanjiDictionary
 
         for (let i = 0; i < nodeArray.length; i++) 
         {
-            node = nodeArray[i];
+            let node = nodeArray[i];
 
             if (node.getAttribute("m_lang") == undefined) 
             {
@@ -81,7 +83,7 @@ class KanjiDictionary
 
         for (let i = 0; i < nodeArray.length; i++) 
         {
-            node = nodeArray[i];
+            let node = nodeArray[i];
 
             if (node.getAttribute("r_type") == readingType) 
             {
@@ -92,17 +94,33 @@ class KanjiDictionary
         return readings;
     }
 
-
-}
-
-class KanjiData
-{
-    constructor(dictionary, kanji)
+    async getKanjiData(kanji)
     {
+        await dictionaryDoc;
 
-        this.node = kanjiMap.get(kanji);
+        // Handle any potential non-kanji characters that appear
+        
+        if (!kanjiMap.has(kanji))
+        {
+            return undefined;
+        }
 
-        //this.readings = 
+        let kanjiNode = kanjiMap.get(kanji);
+
+        let data = 
+        {
+            node: kanjiNode,
+
+            meanings: await this.getMeanings(kanjiNode),
+
+            readings: {
+                on: await this.getReadings(kanjiNode, "ja_on"),
+                kun: await this.getReadings(kanjiNode, "ja_kun")
+            }
+
+        };
+
+        return data;
     }
-}
 
+}

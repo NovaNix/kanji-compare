@@ -16,34 +16,23 @@
         
         <main>
             <div id="kanji-container">
-                <article id="kanji-0" class="kanji" data-slot="0">
-                    <input type="text" class="kanji-input" maxlength="1" oninput="updateCard(this.parentNode)" value="人">
-                    <div class="kanji-image">
-                        <div class="strokes">
-                            <!-- Will be filled with a svg file containing the strokes of the kanji -->
+                <template id="kanji-card-template">
+                    <article id="kanji-0" class="kanji" data-slot="0">
+                        <input type="text" class="kanji-input" maxlength="1" value="人">
+                        <div class="kanji-image">
+                            <div class="strokes">
+                                <!-- Will be filled with a svg file containing the strokes of the kanji -->
+                            </div>
                         </div>
-                    </div>
-                    <section class="kanji-data">
-                        <h2 class="meanings"></h2>
-                        <h3 class="readings"></h3>
-                    </section>
-                </article>
-                <article id="kanji-1" class="kanji" data-slot="1">
-                    <input type="text" class="kanji-input" maxlength="1" oninput="updateCard(this.parentNode)" value="入">
-                    <div class="kanji-image">
-                        <div class="strokes">
-                            <!-- Will be filled with a svg file containing the strokes of the kanji -->
-                        </div>
-                    </div>
-                    <section class="kanji-data">
-                        <h2 class="meanings"></h2>
-                        <h3 class="readings"></h3>
-                    </section>
-                
-                </article>
+                        <section class="kanji-data">
+                            <h2 class="meanings"></h2>
+                            <h3 class="readings"></h3>
+                        </section>
+                    </article>
+                </template>
             </div>
         </main>
-        <script src="kanjiManager.js"></script>
-        <script src="cardManager.js"></script>
+        <script type="module" src="kanjiManager.js"></script>
+        <script type="module" src="cardManager.js"></script>
     </body>
 </html>
