@@ -1,3 +1,9 @@
+:root {
+    --meaning-color: #E0CF46;
+    --kun-reading-color: #5184E0;
+    --on-reading-color: #B23AE0;
+}
+
 html, main, body {
     height: 100%;
     margin: 0;
@@ -113,6 +119,7 @@ path:hover {
     margin-top: 10px;
     width: 90%;
     height: 200px;
+    position: relative;
     
 }
 
@@ -120,19 +127,54 @@ path:hover {
 .data-container 
 {
     background-color: white;
+    width: 100%;
+    max-height: 120%;
     height: fit-content;
     overflow: auto;
     
     border-radius: 10px;
+    
+    position: absolute;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
-.meanings {
+.data-section {
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.data-tag {
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    width: max-content;
+}
+
+.meaning-tag {
     font-family: 'Open Sans', sans-serif;
     text-transform: capitalize;
     text-align: center; 
+    
+    font-size: 1.2em;
+    
+    background-color: var(--meaning-color);
 }
 
-.readings {
+.reading-tag {
     font-family: 'Noto Sans JP', sans-serif;
     text-align: center;
+    
+}
+
+.on-reading-tag {
+    background-color: var(--on-reading-color);
+}
+
+.kun-reading-tag {
+    background-color: var(--kun-reading-color);
 }

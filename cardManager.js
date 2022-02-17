@@ -60,11 +60,21 @@ export function createCard()
     
 }
 
-export function removeCard()
+export function removeCard(card)
 {
     if (cards.length > 0)
     {
-        let removedCard = cards.pop();
+        let removedCard;
+
+        if (card == undefined)
+        {
+            removedCard = cards.pop();
+        }
+
+        else
+        {
+            removedCard = cards.splice(cards.indexOf(card), 1)[0];
+        }
 
         cardHolder.removeChild(removedCard);
 
@@ -97,6 +107,59 @@ export function updateCard(card)
     {
         clearCard(card);
     }
+}
+
+export function populateCardData(slot, data)
+{
+    let card = document.getElementById("kanji-" + slot);
+
+    let meaningsSection = card.getElementsByClassName("meanings")[0];
+    let onReadingsSection = card.getElementsByClassName("on-readings")[0];
+    let kunReadingsSection = card.getElementsByClassName("kun-readings")[0];
+
+    let meanings = data.meanings;
+
+    let onReadings = data.readings.on;
+    let kunReadings = data.readings.kun;
+
+    for (const meaning of meanings)
+    {
+        let meaningTag = document.createElement("span");
+
+        meaningTag.innerHTML = meaning;
+        meaningTag.classList.add("meaning-tag");
+        meaningTag.classList.add("data-tag");
+        
+
+        meaningsSection.appendChild(meaningTag);
+    }
+
+    for (const reading of onReadings)
+    {
+        let readingTag = document.createElement("span");
+
+        readingTag.innerHTML = reading;
+        readingTag.classList.add("reading-tag");
+        readingTag.classList.add("on-reading-tag");
+        readingTag.classList.add("data-tag");
+
+        onReadingsSection.appendChild(readingTag);
+    }
+
+    for (const reading of kunReadings)
+    {
+        let readingTag = document.createElement("span");
+
+        readingTag.innerHTML = reading;
+        readingTag.classList.add("reading-tag");
+        readingTag.classList.add("kun-reading-tag");
+        readingTag.classList.add("data-tag");
+
+        kunReadingsSection.appendChild(readingTag);
+    }
+
+    //.innerHTML = .toString().replace(/,\s*/g, ", ");
+    //card.getElementsByClassName("readings")[0].innerHTML = data.readings.on.toString().replace(/,\s*/g, ", ") + "<br>" + data.readings.kun.toString().replace(/,\s*/g, ", ");
 }
 
 // Removes the strokes, meanings, readings, etc from a card
