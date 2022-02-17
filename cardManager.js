@@ -76,7 +76,7 @@ export function removeCard(card)
             removedCard = cards.splice(cards.indexOf(card), 1)[0];
         }
 
-        cardHolder.removeChild(removedCard);
+        removedCard.remove();
 
         // Update the add and remove buttons
 
@@ -109,6 +109,38 @@ export function updateCard(card)
     }
 }
 
+function createTag(text, ...classes)
+{
+    let tag = document.createElement("span");
+
+    tag.innerHTML = text;
+    tag.classList.add("data-tag");
+
+    for (let i = 0; i < classes.length; i++)
+    {
+        tag.classList.add(classes[i]);
+    }
+
+    // Add Delete Button
+
+    let deleteButton = document.createElement("button");
+    deleteButton.innerHTML = "remove";
+
+    deleteButton.classList.add("material-icons");
+    deleteButton.classList.add("tag-remove-button");
+
+    deleteButton.addEventListener("click", (evt) => deleteTag(tag));
+
+    tag.appendChild(deleteButton);
+
+    return tag;
+}
+
+function deleteTag(tag)
+{
+    tag.remove();
+}
+
 export function populateCardData(slot, data)
 {
     let card = document.getElementById("kanji-" + slot);
@@ -124,36 +156,23 @@ export function populateCardData(slot, data)
 
     for (const meaning of meanings)
     {
-        let meaningTag = document.createElement("span");
+        let meaningTag = createTag(meaning, "meaning-tag");
 
-        meaningTag.innerHTML = meaning;
-        meaningTag.classList.add("meaning-tag");
-        meaningTag.classList.add("data-tag");
+        meaningTag.classList.add();
         
-
         meaningsSection.appendChild(meaningTag);
     }
 
     for (const reading of onReadings)
     {
-        let readingTag = document.createElement("span");
-
-        readingTag.innerHTML = reading;
-        readingTag.classList.add("reading-tag");
-        readingTag.classList.add("on-reading-tag");
-        readingTag.classList.add("data-tag");
+        let readingTag = createTag(reading, "reading-tag", "on-reading-tag");
 
         onReadingsSection.appendChild(readingTag);
     }
 
     for (const reading of kunReadings)
     {
-        let readingTag = document.createElement("span");
-
-        readingTag.innerHTML = reading;
-        readingTag.classList.add("reading-tag");
-        readingTag.classList.add("kun-reading-tag");
-        readingTag.classList.add("data-tag");
+        let readingTag = createTag(reading, "reading-tag", "kun-reading-tag");
 
         kunReadingsSection.appendChild(readingTag);
     }
