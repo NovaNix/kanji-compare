@@ -149,10 +149,11 @@ path:hover {
 
 .data-tag {
     margin: 5px;
-    padding: 5px;
+    padding: 5px 7px 5px 7px;
     border-radius: 5px;
     box-sizing: border-box;
     width: max-content;
+    position: relative;
 }
 
 .meaning-tag {
@@ -177,4 +178,31 @@ path:hover {
 
 .kun-reading-tag {
     background-color: var(--kun-reading-color);
+}
+
+.tag-remove-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(50%, -25%);
+    height: 18px;
+    width: 18px;
+    border-style: none;
+    border-radius: 9px;
+    text-align: center;
+    
+    font-size: 15px;
+    padding: 0;
+    transition-duration: 0.2s;
+    
+    background-color: red;
+    display: none;
+}
+
+.data-tag:hover .tag-remove-button {
+    display: block;
+}
+
+.tag-remove-button:hover {
+    background-color: salmon;
 }
