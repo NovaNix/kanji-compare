@@ -1,4 +1,5 @@
 import { KanjiDictionary } from "./kanjiDictionary.js";
+import * as CardManager from "./cardManager.js";
 
 const parser = new DOMParser();
 const serializer = new XMLSerializer();
@@ -56,8 +57,7 @@ export async function loadKanji(kanji, slot)
 
         if (kanjiData != undefined)
         {
-            card.getElementsByClassName("meanings")[0].innerHTML = kanjiData.meanings.toString().replace(/,\s*/g, ", ");
-            card.getElementsByClassName("readings")[0].innerHTML = kanjiData.readings.on.toString().replace(/,\s*/g, ", ") + "<br>" + kanjiData.readings.kun.toString().replace(/,\s*/g, ", ");
+            CardManager.populateCardData(slot, kanjiData);
         }
 
         else
