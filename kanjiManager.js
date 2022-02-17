@@ -65,7 +65,6 @@ export async function loadKanji(kanji, slot)
             console.log("Failed to find data for kanji " + kanji);
         }
 
-        c
         console.log("Finished loading kanji " + kanji);
 
     }

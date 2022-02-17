@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet"> 
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet"> 
         <link rel="stylesheet" href="style.css">
@@ -24,12 +25,20 @@
                                 <!-- Will be filled with a svg file containing the strokes of the kanji -->
                             </div>
                         </div>
-                        <section class="kanji-data">
-                            <h2 class="meanings"></h2>
-                            <h3 class="readings"></h3>
-                        </section>
+                        <aside class="kanji-data">
+                            <div class="data-container">
+                                <h2 class="meanings"></h2>
+                                <h3 class="readings"></h3>
+                            </div>
+                            
+                        </aside>
                     </article>
                 </template>
+            
+                <div id="add-remove-buttons">
+                    <button id="add-button" class="material-icons">add</button>
+                    <button id="remove-button" class="material-icons">remove</button>
+                </div>
             </div>
         </main>
         <script type="module" src="kanjiManager.js"></script>
