@@ -1,44 +1,9 @@
+import { KanjiDictionary } from "./kanjiDictionary.js";
+
 const parser = new DOMParser();
 const serializer = new XMLSerializer();
 
-var dictionaryDoc = loadKanjiData();
-const kanjiMap = new Map();
-
-// Reads from the massive XML file containing all of the information about the kanji (excluding their drawing) and maps them by kanji to make it easier to access that information
-// Might be a more efficient way to handle all of this data that I don't know
-async function loadKanjiData()
-{
-    console.log("Loading Kanji Dictionary...");
-
-    let response = await fetch("./data/kanjidic2.xml");
-
-    if (response.ok)
-    {
-        console.log("Kanji Dictionary XML Fetched. Loading characters...");
-
-        let xmlString = await response.text();
-
-        let doc = parser.parseFromString(xmlString, "text/xml");
-
-        let charArray = doc.getElementsByTagName("character");
-
-        for (let i = 0; i < charArray.length; i++)
-        {
-            let char = charArray[i];
-            kanjiMap.set(char.getElementsByTagName("literal")[0].childNodes[0].nodeValue, char);
-        }
-
-        console.log("Loaded " + charArray.length + " characters");
-
-        return doc;
-    }
-
-    else
-    {
-        console.error("Failed to load kanji dictionary! " + response.status + ": " + response.statusText);
-        return null;
-    }
-}
+const kanjiDictionary = new KanjiDictionary();
 
 // Extracts the hexidecimal unicode value from a character
 // Returns a string
@@ -54,61 +19,7 @@ function getUnicodeHex(char)
     return code;
 }
 
-// Returns a string containing all of the english meanings of a kanji separated by commas
-function getMeanings(kanjiData)
-{
-    let nodeString = "";
-
-    let nodeArray = kanjiData.getElementsByTagName("meaning");
-
-    for (let i = 0; i < nodeArray.length; i++)
-    {
-        node = nodeArray[i];
-
-        if (node.getAttribute("m_lang") == undefined)
-        {
-            if (i > 0)
-            {
-                nodeString = nodeString + ", "
-            }
-
-            nodeString = nodeString + node.childNodes[0].nodeValue;
-        }
-    }
-
-    return nodeString;
-}
-
-// Returns a string containing all of the readings of a kanji separated by commas
-function getReadings(kanjiData)
-{
-    let nodeString = "";
-
-    let nodeArray = kanjiData.getElementsByTagName("reading");
-
-    let added = 0;
-
-    for (let i = 0; i < nodeArray.length; i++)
-    {
-        node = nodeArray[i];
-
-        if (node.getAttribute("r_type") == "ja_on" || node.getAttribute("r_type") == "ja_kun")
-        {
-            if (added > 0)
-            {
-                nodeString = nodeString + ", "
-            }
-
-            nodeString = nodeString + node.childNodes[0].nodeValue;
-
-            added++;
-        }
-    }
-
-    return nodeString;
-}
-
-async function loadKanji(kanji, slot)
+export async function loadKanji(kanji, slot)
 {
     let kanjiCode = getUnicodeHex(kanji);
 
@@ -140,13 +51,19 @@ async function loadKanji(kanji, slot)
         card.getElementsByClassName("strokes")[0].innerHTML = serializer.serializeToString(svgNode);
 
         // Populate Kanji Info
-
-        let doc = await dictionaryDoc;
         
-        let kanjiData = kanjiMap.get(kanji);
+        let kanjiData = await kanjiDictionary.getKanjiData(kanji);
 
-        card.getElementsByClassName("meanings")[0].innerHTML = getMeanings(kanjiData);
-        card.getElementsByClassName("readings")[0].innerHTML = getReadings(kanjiData);
+        if (kanjiData != undefined)
+        {
+            card.getElementsByClassName("meanings")[0].innerHTML = kanjiData.meanings.toString().replace(/,\s*/g, ", ");
+            card.getElementsByClassName("readings")[0].innerHTML = kanjiData.readings.on.toString().replace(/,\s*/g, ", ") + "<br>" + kanjiData.readings.kun.toString().replace(/,\s*/g, ", ");
+        }
+
+        else
+        {
+            console.log("Failed to find data for kanji " + kanji);
+        }
 
         console.log("Finished loading kanji " + kanji);
 
@@ -158,6 +75,3 @@ async function loadKanji(kanji, slot)
     }
 
 }
-
-loadKanji("人", 0);
-loadKanji("入", 1);

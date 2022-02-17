@@ -16,26 +16,45 @@ html, main, body {
     padding: 20px;
 }
 
-.kanji {
-    padding: 10px;
+#add-remove-buttons {
+    display: flex;
+    flex-direction: column;
+}
 
+#add-remove-buttons button {
+    margin: 5px;
+    background-color: white;
+    width: 1.5em;
+    height: 1.5em;
+    transition-duration: 0.2s;
+}
+
+#add-remove-buttons button:hover{
+    background-color: lightgrey;
+}
+
+.kanji {
+    margin: 10px;
+
+    position: relative;
+    
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
     box-sizing: border-box;
-    /*flex: 1 1 0;*/
+    /*flex: 0 1 0;*/
     
     max-height: 90%;
-    height: 100%;
+    height: auto;
 
-    /*width: 100%;*/
+    width: 22.5%;
 }
 
 .kanji-image {
     height: auto;
-    width: 60vh;
+    width: 100%;
 }
 
 .strokes {
@@ -90,12 +109,25 @@ path:hover {
 }
 
 .kanji-data {
-    /*width: 60%;
-    background-color: white;*/
+
+    margin-top: 10px;
+    width: 90%;
+    height: 200px;
+    
+}
+
+/* The data-container element exists to properly align the cards. If the kanji-data element has a variable height then the cards may become disaligned*/
+.data-container 
+{
+    background-color: white;
+    height: fit-content;
+    overflow: auto;
+    
+    border-radius: 10px;
 }
 
 .meanings {
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     text-transform: capitalize;
     text-align: center; 
 }
