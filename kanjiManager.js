@@ -4,11 +4,11 @@ import * as CardManager from "./cardManager.js";
 const parser = new DOMParser();
 const serializer = new XMLSerializer();
 
-const kanjiDictionary = new KanjiDictionary();
+export const kanjiDictionary = new KanjiDictionary();
 
 // Extracts the hexidecimal unicode value from a character
 // Returns a string
-function getUnicodeHex(char)
+export function getUnicodeHex(char)
 {
     let code = char.charCodeAt(0).toString(16)
 

@@ -188,6 +188,8 @@ export class KanjiDictionary
     async getKanjiData(kanji)
     {
         await dictionaryPromise;
+        await kradfile1Promise;
+        await kradfile2Promise;
 
         // Handle any potential non-kanji characters that appear
         
@@ -207,11 +209,56 @@ export class KanjiDictionary
             readings: {
                 on: await this.getReadings(kanjiNode, "ja_on"),
                 kun: await this.getReadings(kanjiNode, "ja_kun")
-            }
+            },
+
+            parts: partLookup.get(kanji)
 
         };
 
         return data;
+    }
+
+    async getParts(kanji)
+    {
+        await kradfile1Promise;
+        await kradfile2Promise;
+
+        return partLookup.get(kanjiMap.get(kanji));
+    }
+
+    // Converts variations of the same kanji to a single kanji
+    // If a loop is detected it might not be accurate
+    async getLowestForm(kanji, lookupList = [])
+    {
+        let parts = this.getParts(kanji);
+
+        if (parts.length == 1)
+        {
+            let part = parts[0];
+
+            if (part == kanji)
+            {
+                console.log("Pocket found!");
+                return kanji;
+            }
+
+            if (lookupList.indexOf(part) != -1)
+            {
+                console.log("Lookup List Look Detected!");
+                return kanji;
+            }
+
+            else
+            {
+                lookupList.push(part);
+                return this.getLowestForm(part, lookupList);
+            }
+        }
+
+        else
+        {
+            return kanji;
+        }
     }
 
 }

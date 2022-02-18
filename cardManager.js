@@ -109,7 +109,7 @@ export function updateCard(card)
     }
 }
 
-function createTag(text, ...classes)
+function createTag(text, deletable, ...classes)
 {
     let tag = document.createElement("span");
 
@@ -123,15 +123,18 @@ function createTag(text, ...classes)
 
     // Add Delete Button
 
-    let deleteButton = document.createElement("button");
-    deleteButton.innerHTML = "remove";
+    if (deletable)
+    {
+        let deleteButton = document.createElement("button");
+        deleteButton.innerHTML = "remove";
 
-    deleteButton.classList.add("material-icons");
-    deleteButton.classList.add("tag-remove-button");
+        deleteButton.classList.add("material-icons");
+        deleteButton.classList.add("tag-remove-button");
 
-    deleteButton.addEventListener("click", (evt) => deleteTag(tag));
+        deleteButton.addEventListener("click", (evt) => deleteTag(tag));
 
-    tag.appendChild(deleteButton);
+        tag.appendChild(deleteButton);
+    }
 
     return tag;
 }
@@ -149,45 +152,93 @@ export function populateCardData(slot, data)
     let onReadingsSection = card.getElementsByClassName("on-readings")[0];
     let kunReadingsSection = card.getElementsByClassName("kun-readings")[0];
 
+    let partsSection = card.getElementsByClassName("parts")[0];
+
     let meanings = data.meanings;
+
+    let parts = data.parts;
 
     let onReadings = data.readings.on;
     let kunReadings = data.readings.kun;
 
     for (const meaning of meanings)
     {
-        let meaningTag = createTag(meaning, "meaning-tag");
-
-        meaningTag.classList.add();
+        let meaningTag = createTag(meaning, true, "meaning-tag");
         
         meaningsSection.appendChild(meaningTag);
     }
 
+    for (const part of parts)
+    {
+        let partTag = document.createElement("button");
+        partTag.classList.add("data-tag");
+        partTag.classList.add("part-tag");
+        partTag.innerHTML = part;
+
+        let strokes = card.getElementsByClassName("strokes")[0];
+
+        let eGroups = strokes.getElementsByTagName("g");
+
+        let groupFound = false;
+
+        for (const group of eGroups)
+        {
+            let groupElement = group.getAttribute("kvg:element");
+            if (groupElement == null)
+            {
+                continue;
+            }
+
+            console.log(`Group: ${groupElement}, Part: ${part}`);
+
+            console.log(`Group Hex: ${KanjiManager.getUnicodeHex(groupElement)}, Part: ${KanjiManager.getUnicodeHex(part)}`)
+
+            if (KanjiManager.kanjiDictionary.getLowestForm(groupElement) == KanjiManager.kanjiDictionary.getLowestForm(part))
+            {
+                partTag.addEventListener("click", (evt) => togglePartToggle(partTag, group));
+                groupFound = true;
+            }
+
+        }
+
+        if (!groupFound)
+        {   
+            partTag.classList.add("deactivated-part-tag");
+        }
+
+        partsSection.appendChild(partTag);
+    }
+
     for (const reading of onReadings)
     {
-        let readingTag = createTag(reading, "reading-tag", "on-reading-tag");
+        let readingTag = createTag(reading, true, "reading-tag", "on-reading-tag");
 
         onReadingsSection.appendChild(readingTag);
     }
 
     for (const reading of kunReadings)
     {
-        let readingTag = createTag(reading, "reading-tag", "kun-reading-tag");
+        let readingTag = createTag(reading, true, "reading-tag", "kun-reading-tag");
 
         kunReadingsSection.appendChild(readingTag);
     }
 
-    //.innerHTML = .toString().replace(/,\s*/g, ", ");
-    //card.getElementsByClassName("readings")[0].innerHTML = data.readings.on.toString().replace(/,\s*/g, ", ") + "<br>" + data.readings.kun.toString().replace(/,\s*/g, ", ");
 }
 
 // Removes the strokes, meanings, readings, etc from a card
 function clearCard(card)
 {
     card.getElementsByClassName("strokes")[0].innerHTML = "";
-
+    card.getElementsByClassName("parts")[0].innerHTML = "";
     card.getElementsByClassName("meanings")[0].innerHTML = "";
-    card.getElementsByClassName("readings")[0].innerHTML = "";
+    card.getElementsByClassName("on-readings")[0].innerHTML = "";
+    card.getElementsByClassName("kun-readings")[0].innerHTML = "";
+}
+
+function togglePartToggle(partTag, elementGroup)
+{
+    partTag.classList.toggle("highlighted");
+    elementGroup.classList.toggle("highlighted");
 }
 
 init();

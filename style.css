@@ -2,6 +2,8 @@
     --meaning-color: #E0CF46;
     --kun-reading-color: #5184E0;
     --on-reading-color: #B23AE0;
+    --part-color: #F0853A;
+    --disabled-part-color: #66330e;
 }
 
 html, main, body {
@@ -100,6 +102,14 @@ path:hover {
     stroke: red;
 }
 
+g.highlighted path {
+    stroke: orange;
+}
+
+button.highlighted {
+    background-color: orange;
+}
+
 .kanji-input {
     min-width: 1em;
     width: 1em;
@@ -139,6 +149,10 @@ path:hover {
     box-sizing: border-box;
 }
 
+details {
+    
+}
+
 .data-section {
     height: fit-content;
     display: flex;
@@ -147,29 +161,64 @@ path:hover {
     justify-content: center;
 }
 
+summary {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.readings {
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    width: 100%;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.kun-readings, .on-readings {
+    display: inline-block !important;;
+    height: fit-content;
+    width: fit-content;
+}
+
 .data-tag {
+    display: inline-block;
     margin: 5px;
     padding: 5px 7px 5px 7px;
     border-radius: 5px;
     box-sizing: border-box;
     width: max-content;
     position: relative;
+
+    text-align: center; 
 }
 
 .meaning-tag {
     font-family: 'Open Sans', sans-serif;
     text-transform: capitalize;
-    text-align: center; 
     
     font-size: 1.2em;
     
     background-color: var(--meaning-color);
 }
 
+.part-tag {
+    background-color: var(--part-color);
+    font-family: 'Noto Sans JP', sans-serif;
+    width: auto;
+    height: auto;
+    border-style: none;
+    
+    font-size: 1.2em;
+}
+
+.deactivated-part-tag {
+    background-color: var(--disabled-part-color);
+}
+
 .reading-tag {
     font-family: 'Noto Sans JP', sans-serif;
-    text-align: center;
-    
 }
 
 .on-reading-tag {
