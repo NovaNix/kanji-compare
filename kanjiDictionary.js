@@ -222,43 +222,64 @@ export class KanjiDictionary
     {
         await kradfile1Promise;
         await kradfile2Promise;
+        await dictionaryPromise;
 
         return partLookup.get(kanjiMap.get(kanji));
     }
 
-    // Converts variations of the same kanji to a single kanji
-    // If a loop is detected it might not be accurate
-    async getLowestForm(kanji, lookupList = [])
+    // Returns of two parts are "equivelent"
+    async compareParts(part1, part2)
     {
-        let parts = this.getParts(kanji);
 
-        if (parts.length == 1)
+        if (part1 == part2)
         {
-            let part = parts[0];
+            return true;
+        }
 
-            if (part == kanji)
+        let parts1 = await this.getEquivelentParts(part1);
+        let parts2 = await this.getEquivelentParts(part2);
+
+        for (const part of parts1)
+        {
+            if (parts2.includes(part))
             {
-                console.log("Pocket found!");
-                return kanji;
+                return true;
             }
+        }
 
-            if (lookupList.indexOf(part) != -1)
+        return false;
+
+    }
+
+    async getEquivelentParts(part, higherParts = [])
+    {
+        higherParts.push(part);
+        let subParts = await this.getParts(part);
+
+        if (subParts == undefined)
+        {
+            console.log("Found no sub parts! This might be a mistake! Part was " + part);
+            return higherParts;
+        }
+
+        if (subParts.length == 1)
+        {
+            if (subParts[0] == part)
             {
-                console.log("Lookup List Look Detected!");
-                return kanji;
+                return higherParts;
             }
 
             else
             {
-                lookupList.push(part);
-                return this.getLowestForm(part, lookupList);
+                return this.getEquivelentParts(subParts[0], higherParts);
             }
         }
 
         else
         {
-            return kanji;
+            return higherParts;
         }
+
     }
 
 }

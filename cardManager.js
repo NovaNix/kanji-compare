@@ -144,7 +144,7 @@ function deleteTag(tag)
     tag.remove();
 }
 
-export function populateCardData(slot, data)
+export async function populateCardData(slot, data)
 {
     let card = document.getElementById("kanji-" + slot);
 
@@ -193,7 +193,7 @@ export function populateCardData(slot, data)
 
             console.log(`Group Hex: ${KanjiManager.getUnicodeHex(groupElement)}, Part: ${KanjiManager.getUnicodeHex(part)}`)
 
-            if (KanjiManager.kanjiDictionary.getLowestForm(groupElement) == KanjiManager.kanjiDictionary.getLowestForm(part))
+            if (await KanjiManager.kanjiDictionary.compareParts(groupElement, part))
             {
                 partTag.addEventListener("click", (evt) => togglePartToggle(partTag, group));
                 groupFound = true;
