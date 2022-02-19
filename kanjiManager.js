@@ -1,77 +1,30 @@
-import { KanjiDictionary } from "./kanjiDictionary.js";
+import * as KanjiDictionary from "./kanjiDictionary.js";
 import * as CardManager from "./cardManager.js";
+import * as StrokeManager from "./strokeManager.js";
 
-const parser = new DOMParser();
 const serializer = new XMLSerializer();
 
-const kanjiDictionary = new KanjiDictionary();
-
-// Extracts the hexidecimal unicode value from a character
-// Returns a string
-function getUnicodeHex(char)
+export async function loadKanji(kanjiChar, slot)
 {
-    let code = char.charCodeAt(0).toString(16)
+    let card = document.getElementById("kanji-" + slot);
 
-    while (code.length < 5)
+    let svgNode = await StrokeManager.loadStrokes(kanjiChar);
+
+    card.getElementsByClassName("strokes")[0].innerHTML = serializer.serializeToString(svgNode);
+
+    // Populate Kanji Info
+
+    let kanjiData = await KanjiDictionary.getKanjiData(kanjiChar);
+
+    if (kanjiData != undefined)
     {
-        code = "0" + code;
-    }
-
-    return code;
-}
-
-export async function loadKanji(kanji, slot)
-{
-    let kanjiCode = getUnicodeHex(kanji);
-
-    console.log("Loading Kanji " + kanji);
-    //console.log("Kanji Code: " + kanjiCode);
-
-    let kanjiResponse = await fetch("https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/" + kanjiCode + ".svg");
-
-    if (kanjiResponse.ok)
-    {
-        console.log("Successfully got kanji strokes for " + kanji);
-
-        let svgString = await kanjiResponse.text();
-
-        let kanjiDoc = parser.parseFromString(svgString, "image/svg+xml");
-
-        kanjiDoc.getElementById("kvg:StrokeNumbers_" + kanjiCode).remove(); // Remove stroke numbers
-
-        // Configure SVG Node
-
-        let svgNode = kanjiDoc.getElementsByTagName("svg")[0];
-
-        svgNode.removeAttribute("width");
-        svgNode.removeAttribute("height");
-        svgNode.setAttribute("preserveAspectRatio", "xMidYMid meet");
-
-        let card = document.getElementById("kanji-" + slot);
-
-        card.getElementsByClassName("strokes")[0].innerHTML = serializer.serializeToString(svgNode);
-
-        // Populate Kanji Info
-        
-        let kanjiData = await kanjiDictionary.getKanjiData(kanji);
-
-        if (kanjiData != undefined)
-        {
-            CardManager.populateCardData(slot, kanjiData);
-        }
-
-        else
-        {
-            console.log("Failed to find data for kanji " + kanji);
-        }
-
-        console.log("Finished loading kanji " + kanji);
-
+        CardManager.populateCardData(slot, kanjiData);
     }
 
     else
     {
-        console.error("Failed to load kanji " + kanji + " properly: " + kanjiResponse.status + ": " + kanjiResponse.statusText);
+        console.log("Failed to find data for kanji " + kanjiChar);
     }
 
+    console.log("Finished loading kanji " + kanjiChar);
 }
