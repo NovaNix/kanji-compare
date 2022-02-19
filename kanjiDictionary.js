@@ -1,161 +1,29 @@
+
+// Responsible for storing and providing access to kanji readings, meanings, etc
+
 const parser = new DOMParser();
 const serializer = new XMLSerializer();
 
-var dictionaryDoc;
-const kanjiMap = new Map();
-const partLookup = new Map();
-const definitionLookup = new Map();
+const dataMap = loadData();
+const definitionLookup = generateDefinitionLookup();
 
-var dictionaryPromise;
-var definitionLookupPromise;
-var kradfile1Promise;
-var kradfile2Promise;
-
-// Responsible for storing and providing access to kanji readings, meanings, etc
-export class KanjiDictionary
+async function loadData()
 {
-    constructor()
-    {
-        this.load();
-    }
-
-
-    async load()
-    {
-        if (dictionaryPromise == undefined)
-            dictionaryPromise = this.loadDictionary();
-        
-        if (kradfile1Promise == undefined)
-            kradfile1Promise = this.loadPartLookup("kradfileUnicode");
-        if (kradfile2Promise == undefined)
-            kradfile2Promise = this.loadPartLookup("kradfile2Unicode");
-        
-        if (definitionLookupPromise == undefined)
-            definitionLookupPromise = this.generateDefinitionLookup();
-    }
-
-    // Reads from the massive XML file containing all of the information about the kanji (excluding their drawing) and maps them by kanji to make it easier to access that information
-    // Might be a more efficient way to handle all of this data that I don't know
-    async loadDictionary()
-    {
-        console.log("Loading Kanji Dictionary...");
-
-        let response = await fetch("./data/kanjidic2.xml");
-
-        if (response.ok) 
-        {
-            console.log("Kanji Dictionary XML Fetched. Loading characters...");
-
-            let xmlString = await response.text();
-
-            dictionaryDoc = parser.parseFromString(xmlString, "text/xml");
-
-            let charArray = dictionaryDoc.getElementsByTagName("character");
-
-            for (let i = 0; i < charArray.length; i++) 
-            {
-                let char = charArray[i];
-                kanjiMap.set(char.getElementsByTagName("literal")[0].childNodes[0].nodeValue, char);
-            }
-
-            console.log("Loaded " + charArray.length + " characters");
-        }
-
-        else 
-        {
-            console.error("Failed to load kanji dictionary! " + response.status + ": " + response.statusText);
-            return null;
-        }
-    }
-
-    async generateDefinitionLookup()
-    {
-        await dictionaryPromise;
-
-        console.log("Generating Definition Lookup");
-
-        let kanjis = kanjiMap.keys();
-
-        for (const kanji of kanjis)
-        {
-            let definitions = await this.getMeanings(kanjiMap.get(kanji));
-
-            //console.log(`Definitions for kanji ${kanji} are ${definitions}`);
-
-            for (let i = 0; i < definitions.length; i++)
-            {
-                let definition = definitions[i];
-
-                if (definitionLookup.has(definition))
-                {
-                    let kanjiArray = definitionLookup.get(definition);
-
-                    kanjiArray.push(kanji);
-                }
-
-                else
-                {
-                    definitionLookup.set(definition, [kanji]);
-                }
-            }
-        }
-
-        console.log("Mapped kanji to " + definitionLookup.size + " definitions");
-    }
-
-    // Loads the two kradfiles. The version can either be kradfileUnicode or kradfile2Unicode
-    async loadPartLookup(version)
-    {
-        
-        let response = await fetch(`./data/${version}.txt`);
-
-        if (response.ok) 
-        {
-            console.log("Loaded Test Part Lookup");
-
-            let lookupFile = await response.text();
-
-            let lines = lookupFile.matchAll(/^(.) : (.*)/gmu);
-        
-            let numLoaded = 0;
-
-            for (const match of lines) 
-            {
-                let kanji = match[1];
-
-                let parts = match[2].match(/\S/gu);
-
-                partLookup.set(kanji, parts);
-
-                numLoaded++;
-            }
-
-            console.info("Loaded " + numLoaded + " Kanji with parts");
-        }
-
-        else 
-        {
-            console.error("Failed to Load Part Lookup File! " + response.status + ": " + response.statusText);
-            return null;
-        }
-
-
-    }
+    let kanjiNodes = await loadDictionary();
+    let parts = await loadKradfile();
 
     // Returns a string array of meanings
-    async getMeanings(kanjiNode)
+    async function getMeanings(kanjiNode)
     {
-        await dictionaryPromise;
-
         let meanings = [];
 
         let nodeArray = kanjiNode.getElementsByTagName("meaning");
 
-        for (let i = 0; i < nodeArray.length; i++) 
+        for (let i = 0; i < nodeArray.length; i++)
         {
             let node = nodeArray[i];
 
-            if (node.getAttribute("m_lang") == undefined) 
+            if (node.getAttribute("m_lang") == undefined)
             {
                 meanings.push(node.childNodes[0].nodeValue);
             }
@@ -164,19 +32,17 @@ export class KanjiDictionary
         return meanings;
     }
 
-    async getReadings(kanjiNode, readingType)
+    async function getReadings(kanjiNode, readingType)
     {
-        await dictionaryPromise;
-
         let readings = [];
 
         let nodeArray = kanjiNode.getElementsByTagName("reading");
 
-        for (let i = 0; i < nodeArray.length; i++) 
+        for (let i = 0; i < nodeArray.length; i++)
         {
             let node = nodeArray[i];
 
-            if (node.getAttribute("r_type") == readingType) 
+            if (node.getAttribute("r_type") == readingType)
             {
                 readings.push(node.childNodes[0].nodeValue);
             }
@@ -185,101 +51,218 @@ export class KanjiDictionary
         return readings;
     }
 
-    async getKanjiData(kanji)
+    let kanjiData = new Map();
+
+    for (const kanji of kanjiNodes.keys())
     {
-        await dictionaryPromise;
-        await kradfile1Promise;
-        await kradfile2Promise;
+        let kanjiNode = kanjiNodes.get(kanji); 
 
-        // Handle any potential non-kanji characters that appear
-        
-        if (!kanjiMap.has(kanji))
-        {
-            return undefined;
-        }
-
-        let kanjiNode = kanjiMap.get(kanji);
-
-        let data = 
+        let data =
         {
             node: kanjiNode,
 
-            meanings: await this.getMeanings(kanjiNode),
+            kanjiChar: kanji,
+
+            meanings: await getMeanings(kanjiNode),
 
             readings: {
-                on: await this.getReadings(kanjiNode, "ja_on"),
-                kun: await this.getReadings(kanjiNode, "ja_kun")
+                on: await getReadings(kanjiNode, "ja_on"),
+                kun: await getReadings(kanjiNode, "ja_kun")
             },
 
-            parts: partLookup.get(kanji)
+            parts: parts.get(kanji)
 
         };
 
-        return data;
+        kanjiData.set(kanji, data);
     }
 
-    async getParts(kanji)
+    return kanjiData;
+
+}
+
+// Reads from the massive XML file containing all of the information about the kanji (excluding their drawing) and maps them by kanji to make it easier to access that information
+// Might be a more efficient way to handle all of this data that I don't know
+async function loadDictionary()
+{
+    console.log("Loading Kanji Dictionary...");
+
+    let response = await fetch("./data/kanjidic2.xml");
+
+    if (response.ok) 
     {
-        await kradfile1Promise;
-        await kradfile2Promise;
-        await dictionaryPromise;
+        console.log("Kanji Dictionary XML Fetched. Loading characters...");
 
-        return partLookup.get(kanjiMap.get(kanji));
-    }
+        let kanjiMap = new Map();
 
-    // Returns of two parts are "equivelent"
-    async compareParts(part1, part2)
-    {
+        let xmlString = await response.text();
 
-        if (part1 == part2)
+        let dictionaryDoc = parser.parseFromString(xmlString, "text/xml");
+
+        let charArray = dictionaryDoc.getElementsByTagName("character");
+
+        for (let i = 0; i < charArray.length; i++) 
         {
-            return true;
+            let char = charArray[i];
+            kanjiMap.set(char.getElementsByTagName("literal")[0].childNodes[0].nodeValue, char);
         }
 
-        let parts1 = await this.getEquivelentParts(part1);
-        let parts2 = await this.getEquivelentParts(part2);
+        console.log("Loaded " + charArray.length + " characters");
 
-        for (const part of parts1)
+        return kanjiMap;
+    }
+
+    else 
+    {
+        console.error("Failed to load kanji dictionary! " + response.status + ": " + response.statusText);
+        return null;
+    }
+}
+
+// Loads the kradfile
+async function loadKradfile()
+{
+
+    let response = await fetch("./data/kradfile-u.gz");
+
+    if (response.ok)
+    {
+        console.log("Fetched Kradfile. Loading contents...");
+
+        let lookupFile = await response.text();
+
+        let lines = lookupFile.matchAll(/^(.) : (.*)/gmu);
+
+        let partLookup = new Map();
+
+        let numLoaded = 0;
+
+        for (const match of lines)
         {
-            if (parts2.includes(part))
+            let kanji = match[1];
+            let parts = match[2].match(/\S/gu);
+
+            partLookup.set(kanji, parts);
+
+            numLoaded++;
+        }
+
+        console.info("Loaded " + numLoaded + " Kanji Elements from Kradfile");
+
+        return partLookup;
+    }
+
+    else
+    {
+        console.error("Failed to Load Part Lookup File! " + response.status + ": " + response.statusText);
+        return null;
+    }
+
+
+}
+
+async function generateDefinitionLookup()
+{
+    console.log("Generating Definition Lookup");
+
+    let kanjis = (await dataMap).keys();
+
+    let meaningLookup = new Map();
+
+    for (const kanjiChar of kanjis)
+    {
+        let definitions = (await dataMap).get(kanjiChar).meanings;
+
+        //console.log(`Definitions for kanji ${kanji} are ${definitions}`);
+
+        for (let i = 0; i < definitions.length; i++)
+        {
+            let definition = definitions[i];
+
+            if (meaningLookup.has(definition))
             {
-                return true;
-            }
-        }
+                let kanjiArray = meaningLookup.get(definition);
 
-        return false;
-
-    }
-
-    async getEquivelentParts(part, higherParts = [])
-    {
-        higherParts.push(part);
-        let subParts = await this.getParts(part);
-
-        if (subParts == undefined)
-        {
-            console.log("Found no sub parts! This might be a mistake! Part was " + part);
-            return higherParts;
-        }
-
-        if (subParts.length == 1)
-        {
-            if (subParts[0] == part)
-            {
-                return higherParts;
+                kanjiArray.push(kanjiChar);
             }
 
             else
             {
-                return this.getEquivelentParts(subParts[0], higherParts);
+                meaningLookup.set(definition, [kanjiChar]);
             }
         }
+    }
 
-        else
+    console.log("Mapped kanji to " + meaningLookup.size + " definitions");
+
+    return meaningLookup;
+}
+
+export async function getKanjiData(kanjiChar)
+{
+    return (await dataMap).get(kanjiChar);
+}
+
+// Returns of two parts are "equivelent"
+export async function compareParts(part1, part2)
+{
+    if (part1 == part2)
+    {
+        return true;
+    }
+
+    let parts1 = await getEquivelentParts(part1);
+    let parts2 = await getEquivelentParts(part2);
+
+    for (const part of parts1)
+    {
+        if (parts2.includes(part))
+        {
+            return true;
+        }
+    }
+
+    return false;
+
+}
+
+async function getEquivelentParts(part, higherParts = [])
+{
+    higherParts.push(part);
+    let data = (await getKanjiData(part));
+    
+    if (data == undefined)
+    {
+        console.log("Found no sub parts! This might be a mistake! Part was " + part);
+        return higherParts;
+    }
+
+    let subParts = data.parts;
+
+    if (subParts == undefined)
+    {
+        console.log("Found no sub parts! This might be a mistake! Part was " + part);
+        return higherParts;
+    }
+
+    if (subParts.length == 1)
+    {
+        if (subParts[0] == part)
         {
             return higherParts;
         }
 
+        else
+        {
+            return getEquivelentParts(subParts[0], higherParts);
+        }
+    }
+
+    else
+    {
+        return higherParts;
     }
 
 }
+
+

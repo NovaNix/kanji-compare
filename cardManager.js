@@ -1,4 +1,5 @@
 import * as KanjiManager from "./kanjiManager.js";
+import * as KanjiDictionary from "./kanjiDictionary.js";
 
 const cardTemplate = document.getElementById("kanji-card-template");
 const cardHolder = document.getElementById("kanji-container");
@@ -7,6 +8,7 @@ const addCardButton = document.getElementById("add-button");
 const removeCardButton = document.getElementById("remove-button");
 
 const defaultKanji = ["日", "月", "人", "入", "水", "氷"];
+//const defaultKanji = ["鉄", "仙", "失", "金", "繰", "儿"];
 
 const maxCards = 6;
 
@@ -60,6 +62,7 @@ export function createCard()
     
 }
 
+// NOTE, REMOVING ANYTHING BUT THE LAST CARD IS BROKEN! THE CARD IDS NEED TO BE PROPERLY REORDERED!
 export function removeCard(card)
 {
     if (cards.length > 0)
@@ -154,21 +157,14 @@ export async function populateCardData(slot, data)
 
     let partsSection = card.getElementsByClassName("parts")[0];
 
-    let meanings = data.meanings;
-
-    let parts = data.parts;
-
-    let onReadings = data.readings.on;
-    let kunReadings = data.readings.kun;
-
-    for (const meaning of meanings)
+    for (const meaning of data.meanings)
     {
         let meaningTag = createTag(meaning, true, "meaning-tag");
         
         meaningsSection.appendChild(meaningTag);
     }
 
-    for (const part of parts)
+    for (const part of data.parts)
     {
         let partTag = document.createElement("button");
         partTag.classList.add("data-tag");
@@ -176,7 +172,6 @@ export async function populateCardData(slot, data)
         partTag.innerHTML = part;
 
         let strokes = card.getElementsByClassName("strokes")[0];
-
         let eGroups = strokes.getElementsByTagName("g");
 
         let groupFound = false;
@@ -184,16 +179,20 @@ export async function populateCardData(slot, data)
         for (const group of eGroups)
         {
             let groupElement = group.getAttribute("kvg:element");
+            let groupOriginal = group.getAttribute("kvg:original");
+
             if (groupElement == null)
             {
                 continue;
             }
 
-            console.log(`Group: ${groupElement}, Part: ${part}`);
+            if (await KanjiDictionary.compareParts(groupElement, part))
+            {
+                partTag.addEventListener("click", (evt) => togglePartToggle(partTag, group));
+                groupFound = true;
+            }
 
-            console.log(`Group Hex: ${KanjiManager.getUnicodeHex(groupElement)}, Part: ${KanjiManager.getUnicodeHex(part)}`)
-
-            if (await KanjiManager.kanjiDictionary.compareParts(groupElement, part))
+            else if (await KanjiDictionary.compareParts(groupOriginal, part))
             {
                 partTag.addEventListener("click", (evt) => togglePartToggle(partTag, group));
                 groupFound = true;
@@ -209,14 +208,14 @@ export async function populateCardData(slot, data)
         partsSection.appendChild(partTag);
     }
 
-    for (const reading of onReadings)
+    for (const reading of data.readings.on)
     {
         let readingTag = createTag(reading, true, "reading-tag", "on-reading-tag");
 
         onReadingsSection.appendChild(readingTag);
     }
 
-    for (const reading of kunReadings)
+    for (const reading of data.readings.kun)
     {
         let readingTag = createTag(reading, true, "reading-tag", "kun-reading-tag");
 
