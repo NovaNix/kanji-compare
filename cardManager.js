@@ -32,6 +32,7 @@ export function createCard()
         let cardNumber = cards.length;
 
         let cardInput = card.getElementsByClassName("kanji-input")[0];
+        let cardDelete = card.getElementsByClassName("card-delete")[0];
 
         // Configure the card
         //card.id = "kanji-" + cardNumber;
@@ -40,6 +41,8 @@ export function createCard()
         cardInput.value = defaultKanji[cardNumber];
 
         cardInput.addEventListener("input", (event) => updateCard(event.target.parentNode));
+
+        cardDelete.addEventListener("click", (event) => removeCard(card));
 
         // Add the card to the page
 
@@ -62,7 +65,6 @@ export function createCard()
     
 }
 
-// NOTE, REMOVING ANYTHING BUT THE LAST CARD IS BROKEN! THE CARD IDS NEED TO BE PROPERLY REORDERED!
 export function removeCard(card)
 {
     if (cards.length > 0)

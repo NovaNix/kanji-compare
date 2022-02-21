@@ -124,6 +124,26 @@ button.highlighted {
     font-family: 'Noto Sans JP', sans-serif;
 }
 
+.card-delete {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: salmon;
+    border-style: none;
+    font-size: 2em;
+    border-radius: 10px;
+    transition-duration: 0.2s;
+    display: none;
+}
+
+.kanji:hover .card-delete {
+    display: block;
+}
+
+.card-delete:hover {
+    background-color: red;
+}
+
 .kanji-data {
 
     margin-top: 10px;
