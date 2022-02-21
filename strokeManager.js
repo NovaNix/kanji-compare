@@ -71,14 +71,14 @@ export async function loadStrokes(kanji)
         svgNode.removeAttribute("height");
         svgNode.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
-        console.log("Dumping kanji strokes: " + kanji);
+        // console.log("Dumping kanji strokes: " + kanji);
 
-        let strokes = svgNode.getElementsByTagName("path");
+        // let strokes = svgNode.getElementsByTagName("path");
 
-        for (let i = 0; i < strokes.length; i++)
-        {
-            console.log(`${strokes[i].getAttribute("id")}: ${strokes[i].getAttribute("kvg:type")}`);
-        }
+        // for (let i = 0; i < strokes.length; i++)
+        // {
+        //     console.log(`${strokes[i].getAttribute("id")}: ${strokes[i].getAttribute("kvg:type")}`);
+        // }
 
         return svgNode;
     }

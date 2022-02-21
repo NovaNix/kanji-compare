@@ -15,11 +15,15 @@
     </head>
     <body>
         
+        <header>
+            <h1>Kanji Compare</h1>
+        </header>
+
         <main>
             <div id="kanji-container">
                 <template id="kanji-card-template">
-                    <article id="kanji-0" class="kanji" data-slot="0">
-                        <input type="text" class="kanji-input" maxlength="1" value="人">
+                    <article class="kanji" data-slot="0">
+                        <input type="text" class="kanji-input" maxlength="1">
                         <div class="kanji-image">
                             <div class="strokes">
                                 <!-- Will be filled with a svg file containing the strokes of the kanji -->
@@ -43,6 +47,7 @@
                             </div>
                             
                         </aside>
+                        <button class="material-icons card-delete">remove</button>
                     </article>
                 </template>
             
@@ -52,6 +57,17 @@
                 </div>
             </div>
         </main>
+
+        <footer>
+            <p>Thanks to 
+                <a href="https://kanjivg.tagaini.net/">KanjiVG</a>, 
+                the <a href="https://www.edrdg.org/wiki/index.php/KANJIDIC_Project">KANJIDIC Project</a>, 
+                <a href="https://www.edrdg.org/krad/kradinf.html">radkfile/kradfile</a>, and 
+                <a href="https://web.archive.org/web/20191017063523/http://www.kanjicafe.com/kradfile_license.htm">kradfile-u</a>
+                for making this project possible!
+            </p>
+        </footer>
+
         <script type="module" src="kanjiManager.js"></script>
         <script type="module" src="cardManager.js"></script>
     </body>

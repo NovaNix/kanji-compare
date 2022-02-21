@@ -32,14 +32,17 @@ export function createCard()
         let cardNumber = cards.length;
 
         let cardInput = card.getElementsByClassName("kanji-input")[0];
+        let cardDelete = card.getElementsByClassName("card-delete")[0];
 
         // Configure the card
-        card.id = "kanji-" + cardNumber;
+        //card.id = "kanji-" + cardNumber;
         card.setAttribute("data-slot", cardNumber);
 
         cardInput.value = defaultKanji[cardNumber];
 
         cardInput.addEventListener("input", (event) => updateCard(event.target.parentNode));
+
+        cardDelete.addEventListener("click", (event) => removeCard(card));
 
         // Add the card to the page
 
@@ -62,7 +65,6 @@ export function createCard()
     
 }
 
-// NOTE, REMOVING ANYTHING BUT THE LAST CARD IS BROKEN! THE CARD IDS NEED TO BE PROPERLY REORDERED!
 export function removeCard(card)
 {
     if (cards.length > 0)
@@ -149,7 +151,7 @@ function deleteTag(tag)
 
 export async function populateCardData(slot, data)
 {
-    let card = document.getElementById("kanji-" + slot);
+    let card = getCard(slot);
 
     let meaningsSection = card.getElementsByClassName("meanings")[0];
     let onReadingsSection = card.getElementsByClassName("on-readings")[0];
@@ -238,6 +240,11 @@ function togglePartToggle(partTag, elementGroup)
 {
     partTag.classList.toggle("highlighted");
     elementGroup.classList.toggle("highlighted");
+}
+
+export function getCard(slot)
+{
+    return cards[slot];
 }
 
 init();

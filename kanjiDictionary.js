@@ -5,7 +5,8 @@ const parser = new DOMParser();
 const serializer = new XMLSerializer();
 
 const dataMap = loadData();
-const definitionLookup = generateDefinitionLookup();
+var definitionLookup; // Will be readded if I decide to add a definition lookup
+//const definitionLookup = generateDefinitionLookup();
 
 async function loadData()
 {
