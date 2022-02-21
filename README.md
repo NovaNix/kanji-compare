@@ -1,4 +1,4 @@
-# Kanji Compare
+# [Kanji Compare](novanix.github.io/kanji-compare/)
 A website to help tell the difference between two similar looking kanji.
 
 Kanji are one of the hardest parts about learning Japanese. Sometimes when I've been learning I wished there was a place where I could easily compare two complicated kanji so I could differentiate them better. Thats why I made Kanji Compare!
