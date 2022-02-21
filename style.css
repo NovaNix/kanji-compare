@@ -6,10 +6,33 @@
     --disabled-part-color: #66330e;
 }
 
-html, main, body {
-    height: 100%;
+html, body {
+    height: 100vh;
     margin: 0;
     background-color: lightgray;
+    font-family: 'Open Sans', sans-serif;
+}
+
+main {
+    height: calc(100vh - 5em);
+}
+
+header {
+    background-color: #F05C2B;
+    height: 3em;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+header h1 {
+    font-size: 1.5em;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 25px;
+    transform: translate(0%, -50%);
 }
 
 #kanji-container {
@@ -215,7 +238,7 @@ summary {
 }
 
 .meaning-tag {
-    font-family: 'Open Sans', sans-serif;
+    
     text-transform: capitalize;
     
     font-size: 1.2em;
@@ -276,4 +299,20 @@ summary {
 
 .tag-remove-button:hover {
     background-color: salmon;
+}
+
+footer {
+    height: 2em;
+    width: 100%;
+    background-color: #F08650;
+    position: relative;
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.8em;
+    position: absolute;
+    top: 50%;
+    left: 25px;
+    transform: translate(0%, -50%);
 }
