@@ -6,7 +6,7 @@ const serializer = new XMLSerializer();
 
 export async function loadKanji(kanjiChar, slot)
 {
-    let card = document.getElementById("kanji-" + slot);
+    let card = CardManager.getCard(slot);
 
     let svgNode = await StrokeManager.loadStrokes(kanjiChar);
 

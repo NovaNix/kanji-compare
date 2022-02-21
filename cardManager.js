@@ -34,7 +34,7 @@ export function createCard()
         let cardInput = card.getElementsByClassName("kanji-input")[0];
 
         // Configure the card
-        card.id = "kanji-" + cardNumber;
+        //card.id = "kanji-" + cardNumber;
         card.setAttribute("data-slot", cardNumber);
 
         cardInput.value = defaultKanji[cardNumber];
@@ -149,7 +149,7 @@ function deleteTag(tag)
 
 export async function populateCardData(slot, data)
 {
-    let card = document.getElementById("kanji-" + slot);
+    let card = getCard(slot);
 
     let meaningsSection = card.getElementsByClassName("meanings")[0];
     let onReadingsSection = card.getElementsByClassName("on-readings")[0];
@@ -238,6 +238,11 @@ function togglePartToggle(partTag, elementGroup)
 {
     partTag.classList.toggle("highlighted");
     elementGroup.classList.toggle("highlighted");
+}
+
+export function getCard(slot)
+{
+    return cards[slot];
 }
 
 init();
